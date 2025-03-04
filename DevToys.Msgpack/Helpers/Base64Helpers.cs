@@ -7,71 +7,8 @@ namespace DevToys.Msgpack.Helpers;
 
 internal static partial class Base64Helper
 {
-    internal static bool IsBase64DataStrict(string? data)
-    {
-        if (string.IsNullOrWhiteSpace(data))
-        {
-            return false;
-        }
 
-        data = data!.Trim();
-
-        if (data.Length % 4 != 0)
-        {
-            return false;
-        }
-
-        if (Base64Regex().IsMatch(data))
-        {
-            return false;
-        }
-
-        int equalIndex = data.IndexOf('=');
-        int length = data.Length;
-
-        if (!(equalIndex == -1 || equalIndex == length - 1 || equalIndex == length - 2 && data[length - 1] == '='))
-        {
-            return false;
-        }
-
-        string? decoded;
-
-        try
-        {
-            byte[]? decodedData = Convert.FromBase64String(data);
-            decoded = Encoding.UTF8.GetString(decodedData);
-        }
-        catch (Exception)
-        {
-            return false;
-        }
-
-        //check for special chars that you know should not be there
-        char current;
-        for (int i = 0; i < decoded.Length; i++)
-        {
-            current = decoded[i];
-            if (current == 65533)
-            {
-                return false;
-            }
-
-            if (!(current == 0x9
-                  || current == 0xA
-                  || current == 0xD
-                  || current >= 0x20 && current <= 0xD7FF
-                  || current >= 0xE000 && current <= 0xFFFD
-                  || current >= 0x10000 && current <= 0x10FFFF))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    internal static string FromTextToBase64(string? data, Base64Encoding encoding, ILogger logger,
-        CancellationToken cancellationToken)
+    internal static string FromTextToBase64(string? data, Base64Encoding encoding, ILogger logger, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(data))
         {
@@ -82,13 +19,13 @@ internal static partial class Base64Helper
         try
         {
             Encoding encoder = GetEncoder(encoding);
-            byte[]? dataBytes = encoder.GetBytes(data);
+            byte[] bytes = encoder.GetBytes(data);
 
-            cancellationToken.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
 
-            encoded = Convert.ToBase64String(dataBytes);
+            encoded = Convert.ToBase64String(bytes);
 
-            cancellationToken.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
         }
         catch (OperationCanceledException)
         {
@@ -103,8 +40,7 @@ internal static partial class Base64Helper
         return encoded;
     }
 
-    internal static string FromBase64ToText(string? data, Base64Encoding encoding, ILogger logger,
-        CancellationToken cancellationToken)
+    internal static string FromBase64ToText(string? data, Base64Encoding encoding, ILogger logger, CancellationToken ct)
     {
         if (string.IsNullOrWhiteSpace(data))
         {
@@ -118,16 +54,15 @@ internal static partial class Base64Helper
             data = data.PadRight(data.Length + padding, '=');
         }
 
-        string? decoded = string.Empty;
-
+        string decoded = string.Empty;
         try
         {
-            byte[]? decodedData = Convert.FromBase64String(data);
-            cancellationToken.ThrowIfCancellationRequested();
+            byte[] decodedData = Convert.FromBase64String(data);
+            ct.ThrowIfCancellationRequested();
 
             Encoding encoder = GetEncoder(encoding);
 
-            if (encoder is UTF8Encoding && decodedData != null)
+            if (encoder is UTF8Encoding)
             {
                 byte[] preamble = encoder.GetPreamble();
                 if (decodedData.Take(preamble.Length).SequenceEqual(preamble))
@@ -137,12 +72,9 @@ internal static partial class Base64Helper
                 }
             }
 
-            cancellationToken.ThrowIfCancellationRequested();
+            ct.ThrowIfCancellationRequested();
 
-            if (decodedData is not null)
-            {
-                decoded += encoder.GetString(decodedData);
-            }
+            decoded += encoder.GetString(decodedData);
         }
         catch (Exception ex) when (ex is OperationCanceledException || ex is FormatException)
         {
@@ -157,11 +89,24 @@ internal static partial class Base64Helper
         return decoded;
     }
 
-    internal static byte[] FromBase64ToBytes(string? data, Base64Encoding encoding, ILogger logger, CancellationToken cancellationToken)
+    internal static byte[]? FromBase64ToBytes(string data, Base64Encoding encoding, ILogger logger, CancellationToken ct)
     {
-        if (string.IsNullOrWhiteSpace(data))
+        data = data!.Trim();
+        if (data.Length % 4 != 0)
         {
-            return [];
+            return null;
+        }
+        
+        if (Base64Regex().IsMatch(data))
+        {
+            return null;
+        }
+        
+        int equalIndex = data.IndexOf('=');
+        int length = data.Length;
+        if (!(equalIndex == -1 || equalIndex == length - 1 || equalIndex == length - 2 && data[length - 1] == '='))
+        {
+            return null;
         }
 
         int remainder = data!.Length % 4;
@@ -173,11 +118,11 @@ internal static partial class Base64Helper
 
         try
         {
-            byte[] decodedData = Convert.FromBase64String(data);
-            cancellationToken.ThrowIfCancellationRequested();
-            return decodedData;
+            byte[] bytes = Convert.FromBase64String(data);
+            ct.ThrowIfCancellationRequested();
+            return bytes;
         }
-        catch (Exception ex) when (ex is OperationCanceledException || ex is FormatException)
+        catch (Exception ex) when (ex is OperationCanceledException or FormatException)
         {
             // ignore;
         }
@@ -186,7 +131,7 @@ internal static partial class Base64Helper
             LogFailDecodeBase64(logger, ex, encoding);
         }
 
-        return [];
+        return null;
     }
     
     internal static string FromBytesToBase64(byte[]? data, Base64Encoding encoding, ILogger logger, CancellationToken cancellationToken)

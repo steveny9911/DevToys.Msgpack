@@ -60,7 +60,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Msgpack Json.
+        ///   Looks up a localized string similar to Encode and decode MessagePack in Base64 to/from JSON.
         /// </summary>
         internal static string AccessibleName {
             get {
@@ -69,7 +69,16 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Conversion description.
+        ///   Looks up a localized string similar to Configuration.
+        /// </summary>
+        internal static string Configuration {
+            get {
+                return ResourceManager.GetString("Configuration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select which conversion mode you want to use.
         /// </summary>
         internal static string ConversionDescription {
             get {
@@ -78,7 +87,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Conversion title.
+        ///   Looks up a localized string similar to Conversion.
         /// </summary>
         internal static string ConversionTitle {
             get {
@@ -87,7 +96,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Description.
+        ///   Looks up a localized string similar to Encode and decode MessagePack in Base64 to/from JSON.
         /// </summary>
         internal static string Description {
             get {
@@ -96,7 +105,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Four Spaces.
+        ///   Looks up a localized string similar to 4 Spaces.
         /// </summary>
         internal static string FourSpaces {
             get {
@@ -123,7 +132,16 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Json To Msgpack Base64.
+        ///   Looks up a localized string similar to Invalid Base64.
+        /// </summary>
+        internal static string InvalidBase64 {
+            get {
+                return ResourceManager.GetString("InvalidBase64", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to JSON to Msgpack Base64.
         /// </summary>
         internal static string JsonToMsgpackBase64 {
             get {
@@ -132,7 +150,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Long display title.
+        ///   Looks up a localized string similar to Msgpack Base64 &lt;&gt; JSON Encoder / Decoder.
         /// </summary>
         internal static string LongDisplayTitle {
             get {
@@ -150,7 +168,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Msgpack Base64 To Json.
+        ///   Looks up a localized string similar to Msgpack Base64 to JSON.
         /// </summary>
         internal static string MsgpackBase64ToJson {
             get {
@@ -159,7 +177,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One Tab.
+        ///   Looks up a localized string similar to 1 Tab.
         /// </summary>
         internal static string OneTab {
             get {
@@ -177,7 +195,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Short display title.
+        ///   Looks up a localized string similar to Msgpack &lt;&gt; JSON.
         /// </summary>
         internal static string ShortDisplayTitle {
             get {
@@ -186,7 +204,7 @@ namespace DevToys.Msgpack {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Two Spaces.
+        ///   Looks up a localized string similar to 2 Spaces.
         /// </summary>
         internal static string TwoSpaces {
             get {
