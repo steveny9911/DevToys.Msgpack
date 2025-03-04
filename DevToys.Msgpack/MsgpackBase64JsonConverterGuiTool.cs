@@ -197,7 +197,7 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
             await TaskSchedulerAwaiter.SwitchOffMainThreadAsync(ct);
 
             string result = await Convert(input, ct);
-            
+
             ct.ThrowIfCancellationRequested();
             _outputTextArea.Text(result);
         }
