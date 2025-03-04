@@ -9,8 +9,13 @@
     <PropertyGroup>
         <!-- NuGet package -->
         <IsPackable>true</IsPackable>
-        <Version>0.1.0</Version>
         <Title>DevToys.Msgpack</Title>
+        <Version>0.1.0</Version>
+        <PackageReleaseNotes>
+            Added:
+            - Initial release
+            - Convert MessagePack (in Base64) to and from JSON
+        </PackageReleaseNotes>
         <Description>An extension for encoding and decoding MessagePack to and from JSON.</Description>
         <PackageProjectUrl>https://github.com/steveny9911/DevToys.Msgpack</PackageProjectUrl>
         <RepositoryUrl>https://github.com/steveny9911/DevToys.Msgpack</RepositoryUrl>
@@ -21,8 +26,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="$(RepoRoot)..\..\LICENSE" Link="docs\LICENSE.md" Pack="true" PackagePath="\"/>
-        <None Include="$(RepoRoot)..\..\README.md" Link="docs\README.md" Pack="true" PackagePath="\"/>
+        <None Include="$(RepoRoot)..\LICENSE" Link="docs\LICENSE.md" Pack="true" PackagePath="\"/>
+        <None Include="$(RepoRoot)..\README.md" Link="docs\README.md" Pack="true" PackagePath="\"/>
 
         <!-- This makes sure to include platform-specific binaries into the NuGet package, if any-->
         <None Include="runtimes\**" Pack="true" PackagePath="\lib\net8.0\runtimes\">
