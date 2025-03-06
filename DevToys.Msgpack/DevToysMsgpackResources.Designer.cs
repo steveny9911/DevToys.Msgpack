@@ -152,5 +152,29 @@ namespace DevToys.Msgpack {
                 return ResourceManager.GetString("InvalidJson", resourceCulture);
             }
         }
+        
+        internal static string InvalidHex {
+            get {
+                return ResourceManager.GetString("InvalidHex", resourceCulture);
+            }
+        }
+        
+        internal static string MsgpackHexToJson {
+            get {
+                return ResourceManager.GetString("MsgpackHexToJson", resourceCulture);
+            }
+        }
+        
+        internal static string JsonToMsgpackHex {
+            get {
+                return ResourceManager.GetString("JsonToMsgpackHex", resourceCulture);
+            }
+        }
+        
+        internal static string InvalidException {
+            get {
+                return ResourceManager.GetString("InvalidException", resourceCulture);
+            }
+        }
     }
 }

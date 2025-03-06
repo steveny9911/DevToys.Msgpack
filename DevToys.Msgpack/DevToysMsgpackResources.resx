@@ -64,12 +64,24 @@
         <value>Output</value>
     </data>
     <data name="InvalidBase64" xml:space="preserve">
-        <value>Invalid Base64</value>
+        <value>&lt;Invalid Base64&gt;</value>
     </data>
     <data name="Configuration" xml:space="preserve">
         <value>Configuration</value>
     </data>
     <data name="InvalidJson" xml:space="preserve">
-        <value>Invalid JSON</value>
+        <value>&lt;Invalid JSON&gt;</value>
+    </data>
+    <data name="InvalidHex" xml:space="preserve">
+        <value>&lt;Invalid HEX String&gt;</value>
+    </data>
+    <data name="MsgpackHexToJson" xml:space="preserve">
+        <value>Msgpack HEX to JSON</value>
+    </data>
+    <data name="JsonToMsgpackHex" xml:space="preserve">
+        <value>JSON to Msgpack HEX</value>
+    </data>
+    <data name="InvalidException" xml:space="preserve">
+        <value>&lt;Invalid Exception&gt;</value>
     </data>
 </root>

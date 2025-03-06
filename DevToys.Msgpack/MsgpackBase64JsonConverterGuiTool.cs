@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.Composition;
+using System.Text.RegularExpressions;
 using DevToys.Api;
 using DevToys.Msgpack.Helpers;
 using DevToys.Msgpack.Models;
@@ -24,14 +25,19 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
 {
     private const string JsonLanguage = PredefinedCommonDataTypeNames.Json;
     private const string Base64Text = PredefinedCommonDataTypeNames.Base64Text;
+    private const string HexText = PredefinedCommonDataTypeNames.Text;
 
-    private static readonly SettingDefinition<MsgpackBase64JsonConversion> ConversionMode
+    private static readonly SettingDefinition<MsgpackJsonConversion> ConversionMode
         = new(name: $"{nameof(MsgpackBase64JsonConverterGuiTool)}.{nameof(ConversionMode)}",
-            defaultValue: MsgpackBase64JsonConversion.MsgpackBase64ToJson);
+            defaultValue: MsgpackJsonConversion.MsgpackBase64ToJson);
 
     private static readonly SettingDefinition<Indentation> IndentationMode
         = new(name: $"{nameof(MsgpackBase64JsonConverterGuiTool)}.{nameof(IndentationMode)}",
             defaultValue: Indentation.TwoSpaces);
+
+    private static readonly SettingDefinition<Separator> SeparatorMode
+        = new(name: $"{nameof(MsgpackBase64JsonConverterGuiTool)}.{nameof(SeparatorMode)}",
+            defaultValue: Separator.Dash);
 
     private enum GridColumn
     {
@@ -100,9 +106,13 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
                                     ConversionMode,
                                     OnConversionModeChanged,
                                     Item(DevToysMsgpackResources.MsgpackBase64ToJson,
-                                        MsgpackBase64JsonConversion.MsgpackBase64ToJson),
+                                        MsgpackJsonConversion.MsgpackBase64ToJson),
                                     Item(DevToysMsgpackResources.JsonToMsgpackBase64,
-                                        MsgpackBase64JsonConversion.JsonToMsgpackBase64)
+                                        MsgpackJsonConversion.JsonToMsgpackBase64),
+                                    Item(DevToysMsgpackResources.MsgpackHexToJson,
+                                        MsgpackJsonConversion.MsgpackHexToJson),
+                                    Item(DevToysMsgpackResources.JsonToMsgpackHex,
+                                        MsgpackJsonConversion.JsonToMsgpackHex)
                                 ),
                             Setting("msgpack-b64-json-text-indentation-setting")
                                 .Icon("FluentSystemIcons", '\uF6F8')
@@ -154,15 +164,21 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
         }
     }
 
-    private void OnConversionModeChanged(MsgpackBase64JsonConversion conversionMode)
+    private void OnConversionModeChanged(MsgpackJsonConversion conversionMode)
     {
         switch (conversionMode)
         {
-            case MsgpackBase64JsonConversion.JsonToMsgpackBase64:
+            case MsgpackJsonConversion.JsonToMsgpackBase64:
                 SetJsonToMsgpackBase64Conversion();
                 break;
-            case MsgpackBase64JsonConversion.MsgpackBase64ToJson:
+            case MsgpackJsonConversion.MsgpackBase64ToJson:
                 SetMsgpackBase64ToJsonConversion();
+                break;
+            case MsgpackJsonConversion.MsgpackHexToJson:
+                SetMsgpackHexToJsonConversion();
+                break;
+            case MsgpackJsonConversion.JsonToMsgpackHex:
+                SetJsonToMsgpackHexConversion();
                 break;
             default:
                 throw new NotSupportedException();
@@ -196,23 +212,23 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
         {
             await TaskSchedulerAwaiter.SwitchOffMainThreadAsync(ct);
 
-            string result = await Convert(input, ct);
+            string result = await DoConvert(input, ct);
 
             ct.ThrowIfCancellationRequested();
             _outputTextArea.Text(result);
         }
     }
 
-    private async Task<string> Convert(string input, CancellationToken ct)
+    private async Task<string> DoConvert(string input, CancellationToken ct)
     {
         switch (_settingsProvider.GetSetting(ConversionMode))
         {
-            case MsgpackBase64JsonConversion.JsonToMsgpackBase64:
+            case MsgpackJsonConversion.JsonToMsgpackBase64:
             {
                 byte[] bytes = MessagePackSerializer.ConvertFromJson(input, null, ct);
                 return Base64Helper.FromBytesToBase64(bytes, DefaultEncoding, _logger, ct);
             }
-            case MsgpackBase64JsonConversion.MsgpackBase64ToJson:
+            case MsgpackJsonConversion.MsgpackBase64ToJson:
             {
                 if (string.IsNullOrWhiteSpace(input) || string.IsNullOrEmpty(input))
                 {
@@ -239,6 +255,58 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
                     _settingsProvider.GetSetting(IndentationMode), _logger, ct);
                 return formattedJson ?? rawJson;
             }
+            case MsgpackJsonConversion.MsgpackHexToJson:
+            {
+                try
+                {
+                    input = HexHelpers.CleanHexRegex().Replace(input, "");
+                    byte[] bytes = Convert.FromHexString(input);
+                    string? rawJson;
+                    try
+                    {
+                        rawJson = MessagePackSerializer.ConvertToJson(bytes, null, ct);
+                    }
+                    catch (MessagePackSerializationException)
+                    {
+                        return DevToysMsgpackResources.InvalidJson;
+                    }
+
+                    string? formattedJson = await JsonHelpers.FormatAsync(rawJson,
+                        _settingsProvider.GetSetting(IndentationMode), _logger, ct);
+                    return formattedJson ?? rawJson;
+                }
+                catch (FormatException)
+                {
+                    return DevToysMsgpackResources.InvalidHex;
+                }
+                catch (MessagePackSerializationException)
+                {
+                    return DevToysMsgpackResources.InvalidJson;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Failed to convert HEX to JSON.");
+                    return DevToysMsgpackResources.InvalidException;
+                }
+            }
+            case MsgpackJsonConversion.JsonToMsgpackHex:
+            {
+                byte[] bytes = MessagePackSerializer.ConvertFromJson(input, null, ct);
+                string hex = BitConverter.ToString(bytes);
+                switch (_settingsProvider.GetSetting(SeparatorMode))
+                {
+                    case Separator.None:
+                        return hex.Replace("-", "");
+                    case Separator.Space:
+                        return hex.Replace("-", " ");
+                    case Separator.Dash:
+                        return hex;
+                    case Separator.Comma:
+                        return hex.Replace("-", ",");
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
             default:
                 throw new NotSupportedException();
         }
@@ -254,5 +322,17 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
     {
         _inputTextArea.Language(Base64Text).AlwaysWrap();
         _outputTextArea.Language(JsonLanguage).AutoWrap();
+    }
+
+    private void SetMsgpackHexToJsonConversion()
+    {
+        _inputTextArea.Language(HexText).AlwaysWrap();
+        _outputTextArea.Language(JsonLanguage).AutoWrap();
+    }
+
+    private void SetJsonToMsgpackHexConversion()
+    {
+        _inputTextArea.Language(JsonLanguage).AutoWrap();
+        _outputTextArea.Language(HexText).AlwaysWrap();
     }
 }
