@@ -10,11 +10,10 @@
         <!-- NuGet package -->
         <IsPackable>true</IsPackable>
         <Title>DevToys.Msgpack</Title>
-        <Version>0.1.0</Version>
+        <Version>0.1.1</Version>
         <PackageReleaseNotes>
-            Added:
-            - Initial release
-            - Convert MessagePack (in Base64) to and from JSON
+            Fixed:
+            - Catch and display invalid JSON exception
         </PackageReleaseNotes>
         <Description>An extension for encoding and decoding MessagePack to and from JSON.</Description>
         <PackageProjectUrl>https://github.com/steveny9911/DevToys.Msgpack</PackageProjectUrl>
