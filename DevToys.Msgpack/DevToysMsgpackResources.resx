@@ -69,4 +69,7 @@
     <data name="Configuration" xml:space="preserve">
         <value>Configuration</value>
     </data>
+    <data name="InvalidJson" xml:space="preserve">
+        <value>Invalid JSON</value>
+    </data>
 </root>

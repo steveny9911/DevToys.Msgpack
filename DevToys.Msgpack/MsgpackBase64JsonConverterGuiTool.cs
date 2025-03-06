@@ -225,7 +225,16 @@ internal sealed class MsgpackBase64JsonConverterGuiTool : IGuiTool, IDisposable
                     return DevToysMsgpackResources.InvalidBase64;
                 }
 
-                string rawJson = MessagePackSerializer.ConvertToJson(bytes, null, ct);
+                string? rawJson;
+                try
+                {
+                    rawJson = MessagePackSerializer.ConvertToJson(bytes, null, ct);
+                }
+                catch (MessagePackSerializationException)
+                {
+                    return DevToysMsgpackResources.InvalidJson;
+                }
+
                 string? formattedJson = await JsonHelpers.FormatAsync(rawJson,
                     _settingsProvider.GetSetting(IndentationMode), _logger, ct);
                 return formattedJson ?? rawJson;
