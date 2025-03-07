@@ -22,13 +22,13 @@
         <value>Msgpack &lt;&gt; JSON</value>
     </data>
     <data name="LongDisplayTitle" xml:space="preserve">
-        <value>Msgpack Base64 &lt;&gt; JSON Encoder / Decoder</value>
+        <value>Msgpack JSON Encoder / Decoder</value>
     </data>
     <data name="AccessibleName" xml:space="preserve">
-        <value>Encode and decode MessagePack in Base64 to/from JSON</value>
+        <value>Encode and decode MessagePack (in Base64 and HEX) to and from JSON</value>
     </data>
     <data name="Description" xml:space="preserve">
-        <value>Encode and decode MessagePack in Base64 to/from JSON</value>
+        <value>Encode and decode MessagePack (in Base64 and HEX) to and from JSON</value>
     </data>
     <data name="MsgpackBase64ToJson" xml:space="preserve">
         <value>Msgpack Base64 to JSON</value>
@@ -39,10 +39,7 @@
     <data name="ConversionTitle" xml:space="preserve">
         <value>Conversion</value>
     </data>
-    <data name="ConversionDescription" xml:space="preserve">
-        <value>Select which conversion mode you want to use</value>
-    </data>
-    <data name="Indentation" xml:space="preserve">
+    <data name="IndentationTitle" xml:space="preserve">
         <value>Indentation</value>
     </data>
     <data name="TwoSpaces" xml:space="preserve">
@@ -64,12 +61,45 @@
         <value>Output</value>
     </data>
     <data name="InvalidBase64" xml:space="preserve">
-        <value>Invalid Base64</value>
+        <value>&lt;Invalid Base64&gt;</value>
     </data>
     <data name="Configuration" xml:space="preserve">
         <value>Configuration</value>
     </data>
     <data name="InvalidJson" xml:space="preserve">
-        <value>Invalid JSON</value>
+        <value>&lt;Invalid JSON&gt;</value>
+    </data>
+    <data name="InvalidHex" xml:space="preserve">
+        <value>&lt;Invalid HEX String&gt;</value>
+    </data>
+    <data name="MsgpackHexToJson" xml:space="preserve">
+        <value>Msgpack HEX to JSON</value>
+    </data>
+    <data name="JsonToMsgpackHex" xml:space="preserve">
+        <value>JSON to Msgpack HEX</value>
+    </data>
+    <data name="InvalidException" xml:space="preserve">
+        <value>&lt;Invalid Exception&gt;</value>
+    </data>
+    <data name="SeparatorTitle" xml:space="preserve">
+        <value>Separator</value>
+    </data>
+    <data name="SeparatorDescription" xml:space="preserve">
+        <value>For HEX string formatting</value>
+    </data>
+    <data name="None" xml:space="preserve">
+        <value>None</value>
+    </data>
+    <data name="Space" xml:space="preserve">
+        <value>Space</value>
+    </data>
+    <data name="Dash" xml:space="preserve">
+        <value>Dash</value>
+    </data>
+    <data name="Comma" xml:space="preserve">
+        <value>Comma</value>
+    </data>
+    <data name="IndentationDescription" xml:space="preserve">
+        <value>For JSON formatting</value>
     </data>
 </root>
