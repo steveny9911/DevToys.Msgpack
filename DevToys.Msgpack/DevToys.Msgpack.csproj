@@ -10,10 +10,14 @@
         <!-- NuGet package -->
         <IsPackable>true</IsPackable>
         <Title>DevToys.Msgpack</Title>
-        <Version>0.1.1</Version>
+        <Version>0.2.0</Version>
         <PackageReleaseNotes>
+            Added:
+            - Convert between MessagePack HEX string and JSON
+            - Separator setting for formatting HEX string
+            - Nested settings for indentation and separator
             Fixed:
-            - Catch and display invalid JSON exception
+            - Extension title overflow
         </PackageReleaseNotes>
         <Description>An extension for encoding and decoding MessagePack to and from JSON.</Description>
         <PackageProjectUrl>https://github.com/steveny9911/DevToys.Msgpack</PackageProjectUrl>
