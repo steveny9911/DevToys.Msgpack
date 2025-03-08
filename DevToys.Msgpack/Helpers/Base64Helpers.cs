@@ -1,5 +1,4 @@
-﻿using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using DevToys.Msgpack.Models;
 using Microsoft.Extensions.Logging;
 
@@ -7,88 +6,6 @@ namespace DevToys.Msgpack.Helpers;
 
 internal static partial class Base64Helper
 {
-
-    internal static string FromTextToBase64(string? data, Base64Encoding encoding, ILogger logger, CancellationToken ct)
-    {
-        if (string.IsNullOrWhiteSpace(data))
-        {
-            return string.Empty;
-        }
-
-        string? encoded;
-        try
-        {
-            Encoding encoder = GetEncoder(encoding);
-            byte[] bytes = encoder.GetBytes(data);
-
-            ct.ThrowIfCancellationRequested();
-
-            encoded = Convert.ToBase64String(bytes);
-
-            ct.ThrowIfCancellationRequested();
-        }
-        catch (OperationCanceledException)
-        {
-            return string.Empty;
-        }
-        catch (Exception ex)
-        {
-            LogFailEncodeBase64(logger, ex, encoding);
-            return ex.Message;
-        }
-
-        return encoded;
-    }
-
-    internal static string FromBase64ToText(string? data, Base64Encoding encoding, ILogger logger, CancellationToken ct)
-    {
-        if (string.IsNullOrWhiteSpace(data))
-        {
-            return string.Empty;
-        }
-
-        int remainder = data!.Length % 4;
-        if (remainder > 0)
-        {
-            int padding = 4 - remainder;
-            data = data.PadRight(data.Length + padding, '=');
-        }
-
-        string decoded = string.Empty;
-        try
-        {
-            byte[] decodedData = Convert.FromBase64String(data);
-            ct.ThrowIfCancellationRequested();
-
-            Encoding encoder = GetEncoder(encoding);
-
-            if (encoder is UTF8Encoding)
-            {
-                byte[] preamble = encoder.GetPreamble();
-                if (decodedData.Take(preamble.Length).SequenceEqual(preamble))
-                {
-                    // need to keep it this way to have the dom char
-                    decoded += Encoding.Unicode.GetString(preamble, 0, 1);
-                }
-            }
-
-            ct.ThrowIfCancellationRequested();
-
-            decoded += encoder.GetString(decodedData);
-        }
-        catch (Exception ex) when (ex is OperationCanceledException || ex is FormatException)
-        {
-            // ignore;
-        }
-        catch (Exception ex)
-        {
-            LogFailDecodeBase64(logger, ex, encoding);
-            return ex.Message;
-        }
-
-        return decoded;
-    }
-
     internal static byte[]? FromBase64ToBytes(string data, Base64Encoding encoding, ILogger logger, CancellationToken ct)
     {
         data = data!.Trim();
@@ -157,16 +74,6 @@ internal static partial class Base64Helper
         }
 
         return string.Empty;
-    }
-    
-    private static Encoding GetEncoder(Base64Encoding encoding)
-    {
-        return encoding switch
-        {
-            Base64Encoding.Utf8 => new UTF8Encoding(true),
-            Base64Encoding.Ascii => Encoding.ASCII,
-            _ => throw new NotSupportedException(),
-        };
     }
 
     private static void LogFailEncodeBase64(ILogger logger, Exception exception, Base64Encoding encoding)
