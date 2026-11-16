@@ -15,6 +15,6 @@ jobs:
         with:
           dotnet-version: 8.0.x
       - name: Restore dependencies
-        run: dotnet restore --locked-mode ./DevToys.Msgpack.sln
+        run: dotnet restore ./DevToys.Msgpack.sln
       - name: Build
         run: dotnet build --configuration Release ./DevToys.Msgpack.sln
