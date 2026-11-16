@@ -83,7 +83,7 @@ internal static partial class Base64Helper
 
     private static void LogFailDecodeBase64(ILogger logger, Exception exception, Base64Encoding encoding)
     {
-        logger.LogError(1, exception, "Failed to decode Base64t to text. Encoding mode: '{encoding}'", encoding);
+        logger.LogError(1, exception, "Failed to decode Base64 to text. Encoding mode: '{encoding}'", encoding);
     }
 
     [GeneratedRegex("[^A-Z0-9+/=]", RegexOptions.IgnoreCase, "en-US")]
